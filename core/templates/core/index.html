@@ -1,0 +1,42 @@
+{% extends 'core/base.html' %}
+{% load static %}
+
+{% block title %}Eventos Disponibles{% endblock title %}
+
+{% block content %}
+    <h1>Próximos Eventos</h1>
+
+    <div class="row">
+        {% for evento in eventos %}
+        <div class="col-md-4 mb-4">
+            <div class="card h-100">
+                {% if evento.imagen %}
+                <img src="{{ evento.imagen.url }}" class="card-img-top" alt="{{ evento.titulo }}">
+                {% endif %}
+                <div class="card-body">
+                    <h5 class="card-title">{{ evento.titulo }}</h5>
+                    <p class="card-text">
+                        <strong>Fecha:</strong> {{ evento.fecha_hora|date:"d M Y H:i" }} <br>
+                        <strong>Lugar:</strong> {{ evento.lugar }} <br>
+                        <strong>Valor:</strong> ${{ evento.valor }} <br>
+                        <strong>Plazas:</strong> {{ evento.plazas_disponibles }} disponibles 
+                        ({{ evento.plazas_totales }} totales)
+                    </p>
+                    
+                    {% if user.is_authenticated %}
+                        {% if evento.plazas_disponibles > 0 %}
+                            <a href="{% url 'inscribir' evento.id %}" class="btn btn-success">Inscribirse</a>
+                        {% else %}
+                            <button class="btn btn-warning" disabled>Sin Plazas</button>
+                        {% endif %}
+                    {% else %}
+                        <p class="text-danger">Debes iniciar sesión para inscribirte.</p>
+                    {% endif %}
+                </div>
+            </div>
+        </div>
+        {% empty %}
+        <p>No hay eventos publicados por el momento.</p>
+        {% endfor %}
+    </div>
+{% endblock content %}
